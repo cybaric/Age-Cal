@@ -5,7 +5,7 @@ import 'package:age_cal/model/ubah_time.dart';
 import 'package:bloc/bloc.dart';
 
 class CalCubit extends Cubit<CalState> {
-  CalCubit(CalState initialState) : super(CalState(lis: ["", "", ""]));
+  CalCubit(CalState initialState) : super(CalState(lis: ["", "", "", "", ""]));
 
   void hasil(day, month, year) {
     emit(CalState(lis: fungsi(day, month, year)));
@@ -19,7 +19,7 @@ class CalCubit extends Cubit<CalState> {
     String hasilthn = "";
     String hasilbln = "";
     String hasiltgl = "";
-    String thasil = "";
+
     List x = [];
 
     if (isInteger(thn, bln, tgl)) {
@@ -35,18 +35,27 @@ class CalCubit extends Cubit<CalState> {
               (listime[1] > 1 ? " Months" : " Month"); // hasil bulan
           hasiltgl = listime[0].toString() +
               (listime[0] > 1 ? " Days" : " Day"); // hasil sisa hri
-          thasil = totalHariMaju(listime[0], listime[1], listime[2], bln, thn)
-              .toString(); // total dalam hari
-          x = x + [hasilthn, hasilbln, hasiltgl, thasil];
+          var thasil = totalHariMaju(
+              listime[0], listime[1], listime[2], bln, thn); // total dalam hari
+          var hrnya =
+              namaharimundur(DateTime.now().weekday, thasil[0]).toString();
+          x = x +
+              [
+                hasilthn,
+                hasilbln,
+                hasiltgl,
+                "= " + thasil[0].toString() + " Days",
+                hrnya + " "
+              ];
         } else {
-          x =  ["eror 0", "eror 1", "eror 2", "eror 3"];
+          x = ["eror 0", "eror 1", "eror 2", "eror 3"];
         }
       } else {
         x = ["Invalid Date,", "Date Number In That Month", "Is Too Big"];
       }
       return x;
-    }else{
-      x = ["Invalid","Input","Please Correcting"];
+    } else {
+      x = ["Invalid", "Input", "Please Correcting"];
     }
     return x;
   }
