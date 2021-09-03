@@ -10,6 +10,10 @@ class CalCubit extends Cubit<CalState> {
   void hasil(day, month, year) {
     emit(CalState(lis: fungsi(day, month, year)));
   }
+
+  void refresh(){
+    emit(CalState(lis: ["", "", "", "", ""]));
+  }
   //emit(CalState(lis: state.lis + fungsi(day, month, year)));
 
   List fungsi(tgl, bln, thn) {
@@ -26,9 +30,17 @@ class CalCubit extends Cubit<CalState> {
       thn = int.parse(thn);
       bln = int.parse(bln);
       tgl = int.parse(tgl);
+
+      if(thn<0 || bln<0 || tgl<0){
+        x = ["Negative", " Input", " Please", " Correct Again", ""];
+        return x;
+
+      }
+
+
       if (cektgl(tgl, bln, thn)) {
         List listime = lengkap(tgls, blns, thns, tgl, bln, thn);
-        if ((listime[0] >= 0) && (listime[1] >= 0)) {
+        if ((listime[0] >= 0) && (listime[1] >= 0) && (listime[2] >= 0)) {
           hasilthn = listime[2].toString() +
               (listime[2] > 1 ? " Years" : " Year"); //hasil tahun
           hasilbln = listime[1].toString() +
@@ -48,14 +60,14 @@ class CalCubit extends Cubit<CalState> {
                 hrnya + " "
               ];
         } else {
-          x = ["eror 0", "eror 1", "eror 2", "eror 3"];
+          x = [" that is", " still", " in the", " future", "error "];
         }
       } else {
-        x = ["Invalid Date,", "Date Number In That Month", "Is Too Big"];
+        x = ["Invalid Date,", " Date Number", " In That Month ", "Is Too Big", " Correct Again"];
       }
       return x;
     } else {
-      x = ["Invalid", "Input", "Please Correcting"];
+      x = ["Invalid", " Input", " Please ","Correcting Again", " "];
     }
     return x;
   }

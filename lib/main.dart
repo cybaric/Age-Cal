@@ -1,11 +1,16 @@
 import 'package:age_cal/bloc/calcubit.dart';
 import 'package:age_cal/bloc/calstate.dart';
+import 'package:age_cal/view/saved.dart';
 import 'package:age_cal/view/viewmethod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:unity_ads_plugin/unity_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(MyApp());
 }
 
@@ -13,8 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalCubit(CalState(lis: ["", "", ""])),
-      child: MaterialApp(
+      create: (context) => CalCubit(CalState(lis: ["", "", "", "", ""])),
+      child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         home: MyHomePage(),
       ),
@@ -54,8 +59,24 @@ class _MyHomePageState extends State<MyHomePage> {
     double wi = MediaQuery.of(context).size.width;
     double hi = MediaQuery.of(context).size.height;
 
+    final BannerAd myBanner = BannerAd(
+        //adUnitId: 'ca-app-pub-9560479013051071/9964719114',
+        adUnitId: "ca-app-pub-3940256099942544/6300978111",
+        size: (MediaQuery.of(context).size.width > 350)
+            ? AdSize.banner
+            : AdSize(width: 200, height: 50),
+        listener: BannerAdListener(onAdLoaded: (Ad ad) {
+          print("iklan di load");
+        }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print("gagal, dan dipose");
+          ad.dispose();
+        }, onAdOpened: (Ad ad) {
+          print("iklan dibuka");
+        }),
+        request: AdRequest());
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      floatingActionButton: tombolSaved(context),
       body: Stack(children: [
         backgroundimage(wi, hi),
         lengKung(wi, hi),
@@ -68,61 +89,20 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: ListView(children: [
                 dateOfBirth(),
+                rowInput(),
+                SizedBox(
+                  height: 50,
+                ),
+                iklanGogl(myBanner),
+                containerHasil(wi),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    BlocBuilder<CalCubit, CalState>(
-                      builder: (context, state) {
-                        return Text(
-                          state.lis[4],
-                          style: TextStyle(
-                              fontFamily: "Montez-Regular",
-                              color: Colors.pink.shade300,
-                              fontSize: 26),
-                        );
-                      },
-                    ),
-                    inputField(date, "Date"),
-                    inputField(month, "Month"),
-                    inputField(year, "Year"),
+                    tombolRefresh(context),
+                    tombolCalculate(context),
                   ],
                 ),
-                SizedBox(
-                  height: 50,
-                ),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.all(wi/15),
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
-                        color: Colors.greenAccent.withOpacity(0.6),
-                        boxShadow: [
-                          BoxShadow(offset: Offset(5,5),color: Colors.brown.withOpacity(0.4),blurRadius: 5)
-                        ]),
-                    child: Column(
-                      children: [
-                        hasilLengkp(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        totalHari(),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                Center(
-                  child: Container(margin: EdgeInsets.all(20),
-                    child: UnityBannerAd(
-                      placementId: "Banner_Android",
-                    ),
-                  ),
-                ),
+                banerUnity(),
                 SizedBox(
                   height: 1000,
                 ),
@@ -130,8 +110,92 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        tobolCalculate(context),
       ]),
+    );
+  }
+
+  FloatingActionButton tombolSaved(BuildContext context) {
+    return FloatingActionButton(
+      child: Icon(Icons.save),
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return Saved();
+        }));
+      },
+    );
+  }
+
+  Row rowInput() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 20,
+        ),
+        BlocBuilder<CalCubit, CalState>(
+          builder: (context, state) {
+            return Text(
+              state.lis[4],
+              style: TextStyle(
+                  fontFamily: "Montez-Regular",
+                  color: Colors.pink.shade300,
+                  fontSize: 26),
+            );
+          },
+        ),
+        inputField(date, "Date"),
+        inputField(month, "Month"),
+        inputField(year, "Year"),
+      ],
+    );
+  }
+
+  Center banerUnity() {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.all(10),
+        child: UnityBannerAd(
+          placementId: "Banner_Android",
+        ),
+      ),
+    );
+  }
+
+  Center containerHasil(double wi) {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.all(wi / 50),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.greenAccent.withOpacity(0.6),
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset(5, 5),
+                  color: Colors.brown.withOpacity(0.4),
+                  blurRadius: 5)
+            ]),
+        child: Column(
+          children: [
+            hasilLengkp(),
+            SizedBox(
+              height: 10,
+            ),
+            totalHari(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container iklanGogl(BannerAd myBanner) {
+    return Container(
+      child: AdWidget(
+        ad: myBanner..load(),
+        key: UniqueKey(),
+      ),
+      height: 50,
     );
   }
 
@@ -163,9 +227,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Align tobolCalculate(BuildContext context) {
+  Align tombolCalculate(BuildContext context) {
     return Align(
-      alignment: Alignment(0.9, 0.9),
+      alignment: Alignment(0, 0.9),
       child: GestureDetector(
         onTap: () {
           BlocProvider.of<CalCubit>(context)
@@ -173,6 +237,21 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child:
             tomBol3Di("Calculate", Colors.amber, Colors.amber.withOpacity(0.6)),
+      ),
+    );
+  }
+
+  Align tombolRefresh(BuildContext context) {
+    return Align(
+      alignment: Alignment(0, 0.9),
+      child: GestureDetector(
+        onTap: () {
+          BlocProvider.of<CalCubit>(context).refresh();
+          date.text = "";
+          month.text = "";
+          year.text = "";
+        },
+        child: tomBol3Di("Refresh", Colors.pink, Colors.pink.withOpacity(0.6)),
       ),
     );
   }
