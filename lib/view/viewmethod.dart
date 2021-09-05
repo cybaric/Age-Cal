@@ -20,6 +20,27 @@ Container liNear(Color a, Widget widg ,Color c) {
   );
 }
 
+Container tomBolNav(Color a, Widget wid, Color c) {
+  return Container(
+    margin: EdgeInsets.all(4),
+    width: 50,
+    height: 50,
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40),
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [a, Colors.white54, c]),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.indigo.withOpacity(0.5),
+              offset: Offset(3, 3),
+              blurRadius: 4),
+        ]),
+    child: wid,
+  );
+}
+
 Container tomBol3Di(String text, Color a, Color c) {
   return Container(
     width: 65,
@@ -49,10 +70,10 @@ class WaveCliper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
 
-    path.lineTo(0, size.height *1/ 5);
+    path.lineTo(0, size.height *1/ 4);
    // path.quadraticBezierTo(size.width / 5, 0, size.width / 2, size.height / 2);
     path.quadraticBezierTo(
-        size.width * 0.1, size.height*2/3, size.width, size.height / 8);
+        size.width * 0.1, size.height, size.width, size.height / 6);
     path.lineTo(size.width, 0);
     path.close();
     return path;

@@ -69,13 +69,12 @@ class _AddState extends State<Add> {
     if (thni == thn) {
       if (blni > bln) {
         b = true;
-      }
-      else{
+      } else {
         if (blni == bln) {
           if (tgli > tgl) {
             b = true;
-          }else{
-            b =false;
+          } else {
+            b = false;
           }
         }
       }
@@ -108,10 +107,10 @@ class _AddState extends State<Add> {
       };
       int thni = int.parse(year.text);
       int blni = int.parse(month.text);
-      int tgli = int.parse(date.text);      
+      int tgli = int.parse(date.text);
 
-      if (cektgl(tgli, blni, thni) && isInteger(thni.toString(), blni.toString(), tgli.toString())) {
-      
+      if (cektgl(tgli, blni, thni) &&
+          isInteger(thni.toString(), blni.toString(), tgli.toString())) {
         var savedPastData = await Data.getPastData();
         if (index == null) {
           //create data baru
@@ -161,12 +160,11 @@ class _AddState extends State<Add> {
     }
   }
 
-  deleteData() async {   
-      var savedPastData = await Data.getPastData();
-      savedPastData.removeAt(index);
-      await Data.savePastData(savedPastData);
-      Navigator.pop(context);
-    
+  deleteData() async {
+    var savedPastData = await Data.getPastData();
+    savedPastData.removeAt(index);
+    await Data.savePastData(savedPastData);
+    Navigator.pop(context);
   }
 
   getDeleteButton() {

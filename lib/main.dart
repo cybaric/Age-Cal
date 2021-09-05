@@ -5,7 +5,6 @@ import 'package:age_cal/view/viewmethod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:unity_ads_plugin/unity_ads.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
@@ -40,31 +39,17 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController year = TextEditingController();
 
   @override
-  void initState() {
-    UnityAds.init(
-      gameId: "4284815",
-    );
-    // UnityAds.showVideoAd(
-    //     placementId: "Interstitial_Android",
-    //     listener: (state, args) {
-    //       if (state == UnityAdState.complete) {
-    //         print("video selesai");
-    //       } else if (state == UnityAdState.skipped) {}
-    //     });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double wi = MediaQuery.of(context).size.width;
     double hi = MediaQuery.of(context).size.height;
 
-    final BannerAd myBanner = BannerAd(
-        //adUnitId: 'ca-app-pub-9560479013051071/9964719114',
-        adUnitId: "ca-app-pub-3940256099942544/6300978111",
-        size: (MediaQuery.of(context).size.width > 350)
-            ? AdSize.banner
-            : AdSize(width: 200, height: 50),
+    BannerAd myBanner = BannerAd(
+        adUnitId: 'ca-app-pub-9560479013051071/9964719114',
+        //adUnitId: "ca-app-pub-3940256099942544/6300978111",
+        // size: (MediaQuery.of(context).size.width > 350)
+        //     ? AdSize.banner
+        //     : AdSize(width: 200, height: 50),
+        size: AdSize.banner,
         listener: BannerAdListener(onAdLoaded: (Ad ad) {
           print("iklan di load");
         }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
@@ -76,7 +61,22 @@ class _MyHomePageState extends State<MyHomePage> {
         request: AdRequest());
 
     return Scaffold(
-      floatingActionButton: tombolSaved(context),
+      floatingActionButton: Align(alignment: Alignment.bottomCenter,
+        child: GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext conntext) {
+                return Saved();
+              }));
+            },
+            child: tomBolNav(
+                Colors.pink,
+                Icon(
+                  Icons.save,
+                  color: Colors.green.shade700,
+                ),
+                Colors.purple.withOpacity(0.5))),
+      ),
       body: Stack(children: [
         backgroundimage(wi, hi),
         lengKung(wi, hi),
@@ -86,15 +86,16 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(
               height: hi / 8,
             ),
+            iklanGogl(myBanner),
+            SizedBox(
+              height: 5,
+            ),
             Expanded(
               child: ListView(children: [
                 dateOfBirth(),
-                rowInput(),
-                SizedBox(
-                  height: 50,
-                ),
-                iklanGogl(myBanner),
+                rowInput(),                
                 containerHasil(wi),
+                SizedBox(height: 5,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -102,9 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     tombolCalculate(context),
                   ],
                 ),
-                banerUnity(),
                 SizedBox(
-                  height: 1000,
+                  height: 500,
                 ),
               ]),
             ),
@@ -114,15 +114,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  FloatingActionButton tombolSaved(BuildContext context) {
-    return FloatingActionButton(
-      child: Icon(Icons.save),
-      onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return Saved();
-        }));
-      },
+  Container iklanGogl(BannerAd myBanner) {
+    return Container(
+      child: AdWidget(
+        ad: myBanner..load(),
+        key: UniqueKey(),
+      ),
+      height: 55,
     );
   }
 
@@ -151,17 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Center banerUnity() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.all(10),
-        child: UnityBannerAd(
-          placementId: "Banner_Android",
-        ),
-      ),
-    );
-  }
-
   Center containerHasil(double wi) {
     return Center(
       child: Container(
@@ -186,16 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-    );
-  }
-
-  Container iklanGogl(BannerAd myBanner) {
-    return Container(
-      child: AdWidget(
-        ad: myBanner..load(),
-        key: UniqueKey(),
-      ),
-      height: 50,
     );
   }
 
@@ -236,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
               .hasil(date.text, month.text, year.text);
         },
         child:
-            tomBol3Di("Calculate", Colors.amber, Colors.amber.withOpacity(0.6)),
+            tomBol3Di("Calculate", Colors.orange, Colors.amber.withOpacity(0.6)),
       ),
     );
   }
@@ -251,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
           month.text = "";
           year.text = "";
         },
-        child: tomBol3Di("Refresh", Colors.pink, Colors.pink.withOpacity(0.6)),
+        child: tomBol3Di("Refresh", Colors.green, Colors.greenAccent.withOpacity(0.6)),
       ),
     );
   }
