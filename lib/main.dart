@@ -5,11 +5,8 @@ import 'package:age_cal/view/viewmethod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
   runApp(MyApp());
 }
 
@@ -43,25 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
     double wi = MediaQuery.of(context).size.width;
     double hi = MediaQuery.of(context).size.height;
 
-    BannerAd myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-9560479013051071/9964719114',
-        //adUnitId: "ca-app-pub-3940256099942544/6300978111",
-        // size: (MediaQuery.of(context).size.width > 350)
-        //     ? AdSize.banner
-        //     : AdSize(width: 200, height: 50),
-        size: AdSize.banner,
-        listener: BannerAdListener(onAdLoaded: (Ad ad) {
-          print("iklan di load");
-        }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print("gagal, dan dipose");
-          ad.dispose();
-        }, onAdOpened: (Ad ad) {
-          print("iklan dibuka");
-        }),
-        request: AdRequest());
-
     return Scaffold(
-      floatingActionButton: Align(alignment: Alignment.bottomCenter,
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
         child: GestureDetector(
             onTap: () {
               Navigator.push(context,
@@ -86,16 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(
               height: hi / 8,
             ),
-            iklanGogl(myBanner),
             SizedBox(
               height: 5,
             ),
             Expanded(
               child: ListView(children: [
                 dateOfBirth(),
-                rowInput(),                
+                rowInput(),
                 containerHasil(wi),
-                SizedBox(height: 5,),
+                SizedBox(
+                  height: 5,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -111,16 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ]),
-    );
-  }
-
-  Container iklanGogl(BannerAd myBanner) {
-    return Container(
-      child: AdWidget(
-        ad: myBanner..load(),
-        key: UniqueKey(),
-      ),
-      height: 55,
     );
   }
 
@@ -212,8 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
           BlocProvider.of<CalCubit>(context)
               .hasil(date.text, month.text, year.text);
         },
-        child:
-            tomBol3Di("Calculate", Colors.orange, Colors.amber.withOpacity(0.6)),
+        child: tomBol3Di(
+            "Calculate", Colors.orange, Colors.amber.withOpacity(0.6)),
       ),
     );
   }
@@ -228,7 +200,8 @@ class _MyHomePageState extends State<MyHomePage> {
           month.text = "";
           year.text = "";
         },
-        child: tomBol3Di("Refresh", Colors.green, Colors.greenAccent.withOpacity(0.6)),
+        child: tomBol3Di(
+            "Refresh", Colors.green, Colors.greenAccent.withOpacity(0.6)),
       ),
     );
   }

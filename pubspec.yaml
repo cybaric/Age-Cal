@@ -27,7 +27,6 @@ dependencies:
   flutter_bloc: ^7.2.0
   flutter_launcher_icons: ^0.9.2
   get: ^4.3.8
-  google_mobile_ads: ^0.13.3
   shared_preferences: ^2.0.6
   unity_ads_plugin: ^0.2.3
 
